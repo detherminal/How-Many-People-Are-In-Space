@@ -1,11 +1,9 @@
 package com.peseca.howmanypeopleareinspace
 
-import android.app.Person
-import androidx.appcompat.app.AppCompatActivity
+import android.icu.text.MessageFormat.format
 import android.os.Bundle
-import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.beust.klaxon.*
@@ -14,9 +12,17 @@ import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.joda.time.DateTime
+import org.joda.time.Days
+import org.joda.time.format.DateTimeFormat
 import java.lang.Integer.parseInt
+import java.lang.String.format
 import java.net.URL
+import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,6 +42,8 @@ class MainActivity : AppCompatActivity() {
         numbertext = findViewById(R.id.number)
         recycler = findViewById(R.id.recycler)
 
+        val today = SimpleDateFormat("ddMMyyyy")
+
         CoroutineScope(Default).launch {
             var result = URL("https://www.howmanypeopleareinspacerightnow.com/peopleinspace.json").readText()
             val parser : Parser = Parser()
@@ -53,22 +61,26 @@ class MainActivity : AppCompatActivity() {
             }
             for (i in (json.lookup<String?>("people.launchdate"))) {
                 val date = i.toString().split("-")
-                val year = parseInt(date[0])
-                val month = parseInt(date[1])
-                val day = parseInt(date[2])
-                val currentYear = parseInt(SimpleDateFormat("yyyy").toString())
-                val currentMonth = parseInt(SimpleDateFormat("MM").toString())
-                val currentDay = parseInt(SimpleDateFormat("dd").toString())
-                var daysInSpace : Int = 0
+                val year = date[0]
+                val month = date[1]
+                val day = date[2]
+                val launchday : String = day.toString() + month.toString() + year.toString()
+                val jodaDate : DateTime = DateTime()
+                val datetimeformatter : org.joda.time.format.DateTimeFormatter = DateTimeFormat.forPattern("ddMMyyyy")
+                val jodaDateLaunch : DateTime = DateTime.parse(launchday, datetimeformatter)
+                val difference : Int = (Days.daysBetween(jodaDateLaunch, jodaDate)).days
+                var diff = difference.toString() + " Days In Space"
+                personDaysInSpace.add(diff)
             }
             for (i in (json.lookup<String?>("people.country"))) {
-                i?.capitalize()
-                i?.let { personWhereFrom.add(it) }
+                val new = i!!.capitalize()
+                personWhereFrom.add(new)
             }
-            val customadapter = RecyclerViewAdapter(this@MainActivity, personName, personPosition, personDaysInSpace, personWhereFrom)
-            recycler.setLayoutManager(LinearLayoutManager(this@MainActivity))
-            recycler.adapter = customadapter
+            withContext(Main) {
+                val customadapter = RecyclerViewAdapter(this@MainActivity, personName, personPosition, personDaysInSpace, personWhereFrom)
+                recycler.setLayoutManager(LinearLayoutManager(this@MainActivity))
+                recycler.adapter = customadapter
+            }
         }
     }
-
 }

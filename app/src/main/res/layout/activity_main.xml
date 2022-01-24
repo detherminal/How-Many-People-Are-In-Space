@@ -35,7 +35,9 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/_178sdp">
+        android:layout_marginTop="@dimen/_178sdp"
+        android:background="@color/space_color"
+        >
 
 
     </androidx.recyclerview.widget.RecyclerView>

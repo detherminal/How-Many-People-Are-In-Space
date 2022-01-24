@@ -1,6 +1,6 @@
 # How-Many-People-Are-In-Space
 
-Do you wonder how many people are in space? Now you can check instantly with this app.
+Do you wonder how many people are in space right now? Now you can check instantly with this app.
 The app gets the api from [howmanypeopleareinspacerightnow.com](https://www.howmanypeopleareinspacerightnow.com) and displays it on the screen.
 
 # System Requirements

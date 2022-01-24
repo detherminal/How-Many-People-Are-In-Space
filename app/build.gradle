@@ -42,7 +42,11 @@ dependencies {
 
     // JSON parser
     implementation 'com.beust:klaxon:5.5'
+    implementation 'org.json:json:20180813'
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
+
+    // RecyclerView
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
 }
